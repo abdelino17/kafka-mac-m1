@@ -1,0 +1,40 @@
+services:
+  zookeeper:
+    build:
+      context: zookeeper/
+      args:
+        ZKP_VERSION: ${ZKP_VERSION}
+    volumes:
+      - zookeeper_data:/opt/zookeeper/data
+    restart: always
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+    networks:
+      - obs
+  kafka:
+    build:
+      context: kafka/
+      args:
+        KAFKA_VERSION: ${KAFKA_VERSION}
+    volumes:
+      - kafka_data:/kafka
+    restart: always
+    container_name: kafka
+    environment:
+      - KAFKA_ADVERTISED_HOST_NAME=127.0.0.1
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=INSIDE://:9092
+    ports:
+      - 9092:9092
+    networks:
+      - obs
+    depends_on:
+      - zookeeper
+volumes:
+  zookeeper_data:
+    driver: local
+  kafka_data:
+    driver: local
