@@ -2,7 +2,8 @@
 
 FILENAME="kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz"
 
-url=$(curl --stderr /dev/null "https://www.apache.org/dyn/closer.cgi?path=/kafka/${KAFKA_VERSION}/${FILENAME}&as_json=1" | jq -r '"\(.preferred)\(.path_info)"')
+kafka_base_url=$(curl --stderr /dev/null "https://www.apache.org/dyn/closer.lua/kafka/${KAFKA_VERSION}/${FILENAME}?as_json=1" | jq -r '.path_info')
 
-echo "Downloading Kafka from $url"
-wget "${url}" -O "/tmp/${FILENAME}"
+echo "Downloading Kafka from $zkp_base_url"
+
+wget "https://dlcdn.apache.org/${kafka_base_url}" -O "/tmp/${FILENAME}"

@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk-alpine:17.0.2
+FROM azul/zulu-openjdk-alpine:18.0.1
 
 ARG KAFKA_VERSION
 ARG scala_version=2.13
@@ -14,8 +14,9 @@ ENV PATH=${PATH}:${KAFKA_HOME}/bin
 
 COPY download-kafka.sh start-kafka.sh /tmp/
 
-RUN apk add --no-cache bash curl jq \
+RUN apk add --no-cache bash curl jq dos2unix \
     && chmod a+x /tmp/*.sh \
+    && dos2unix /tmp/*sh \
     && mv /tmp/start-kafka.sh /usr/bin \
     && sync && /tmp/download-kafka.sh \
     && tar xfz /tmp/kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz -C /opt \
@@ -27,8 +28,6 @@ RUN apk add --no-cache bash curl jq \
     && rm glibc-${GLIBC_VERSION}.apk
 
 EXPOSE 9092
-
-EXPOSE 9094
 
 VOLUME [ "/kafka" ]
 

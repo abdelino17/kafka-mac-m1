@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk-alpine:17.0.2
+FROM azul/zulu-openjdk-alpine:18.0.1
 
 ARG ZKP_VERSION
 ARG glibc_version=2.35-r0
@@ -12,10 +12,11 @@ ENV PATH=${PATH}:${ZKP_HOME}/bin
 
 COPY download-zkp.sh start-zkp.sh /tmp/
 
-RUN apk add --no-cache bash curl jq \
+RUN apk add --no-cache bash curl jq dos2unix \
     && chmod a+x /tmp/*.sh \
+    && dos2unix /tmp/*sh \
     && mv /tmp/start-zkp.sh /usr/bin \
-    && sync && /tmp/download-zkp.sh \
+    && /tmp/download-zkp.sh \
     && tar xvzf /tmp/apache-zookeeper-${ZKP_VERSION}-bin.tar.gz -C /opt \
     && rm /tmp/apache-zookeeper-${ZKP_VERSION}-bin.tar.gz \
     && ln -s /opt/apache-zookeeper-${ZKP_VERSION}-bin ${ZKP_HOME} \
